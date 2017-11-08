@@ -13,28 +13,31 @@ angular.module('movieApp', ['ngRoute'])
 	.controller('homeCtrl', function($scope, searchSrv, createSrv){
 		$('#searchButton').on('click', function (e) {
 
-			$scope.color = '';
+			$scope.movies = '';
 
 			var acteur = $('#acteurText').val();
+			var temp = acteur.split(" ");
+			var voornaamActeur = temp[0];
+			var achternaamActeur = temp[1];
 			searchSrv.getMovies(acteur).then(function(data){
-				if(Object.keys(acteur).length == 0){
 	    			searchSrv.getMovies().then(function(data){
 	    				acteur = data;
 	    				createSrv.setObject('acteur', data);
+	    			$scope.movies = searchSrv.getMovies(acteur);
 	    			});
-	    		}
-	    		else {
-	    			$scope.color = searchSrv.getMovies(acteur);
-	    		}	
-			
 			});
 		});
 	})
+	
 
 	.service('searchSrv', function($http, $q){
 		this.getMovies = function(acteur) {
+			var acteur = $('#acteurText').val();
+			var temp = acteur.split(" ");
+			var voornaamActeur = temp[0];
+			var achternaamActeur = temp[1];
 	    			var q = $q.defer();
-	    			var url = 'www.theimdbapi.org/api/find/person?name={person+name}';
+	    			var url = 'www.theimdbapi.org/api/find/person?name='+ voornaamActeur + "+" + achternaamActeur;
 
 	    			$http.get(url)
 	    				.then(function(data){
